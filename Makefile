@@ -25,6 +25,7 @@ INCLUDE	:= include
 
 # define lib directory
 LIB		:= lib
+Libraries := -lglad -lglfw3dll
 
 ifeq ($(OS),Windows_NT)
 MAIN	:= main.exe
@@ -71,7 +72,7 @@ $(OUTPUT):
 	$(MD) $(OUTPUT)
 
 $(MAIN): $(OBJECTS) 
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(OUTPUTMAIN) $(OBJECTS) $(LFLAGS) $(LIBS) $(Libraries)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
