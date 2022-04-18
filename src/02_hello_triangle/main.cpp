@@ -62,27 +62,35 @@ int main()
 
     //定义顶点数组
     GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
+        0.5f, 0.5f, 0.0f,   // 右上角
+        0.5f, -0.5f, 0.0f,  // 右下角
+        -0.5f, -0.5f, 0.0f, // 左下角
+        -0.5f, 0.5f, 0.0f   // 左上角
+    };
 
-    //创建VBO
-    unsigned int VBO;
+    //索引数组
+    unsigned int indices[] = {
+        // 注意索引从0开始!
+        0, 1, 3, // 第一个三角形
+        1, 2, 3  // 第二个三角形
+    };
+
+    //创建VBO,VAO,EBO
+    unsigned int VBO, VAO, EBO;
     glGenBuffers(1, &VBO);
-    //绑定缓冲
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    //创建VAO
-    unsigned int VAO;
     glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &EBO);
+
     //绑定VAO
     glBindVertexArray(VAO);
 
-    //把顶点数据复制到缓冲中
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // GL_STATIC_DRAW ：数据不会或几乎不会改变。
-    // GL_DYNAMIC_DRAW：数据会被改变很多。
-    // GL_STREAM_DRAW ：数据每次绘制时都会改变。
+    //绑定VBO缓冲
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //填充VBO数据
+
+    //绑定EBO缓冲
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     //设置顶点属性指针
     //第一个参数是顶点属性的索引，第二个参数是顶点属性的大小，第三个参数是顶点属性的数据类型，
@@ -161,15 +169,24 @@ int main()
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
+
         // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawArrays(GL_LINE_LOOP, 0, 3);
-        glDrawArrays(GL_POINTS, 0, 3);
+        // glDrawArrays(GL_LINE_LOOP, 0, 3);
+        // glDrawArrays(GL_POINTS, 0, 3);
+
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); //解绑VAO
 
         // 检查并调用事件，交换缓冲
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
+
+    //资源释放
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteProgram(shaderProgram);
 
     glfwTerminate();
 
